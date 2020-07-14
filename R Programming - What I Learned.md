@@ -373,12 +373,59 @@ function will continue and the warning will print at the end.
 
 An error is a fatal problem, it stops the execution of the function. 
 
-The traceback debugging tool tells you how many function calls you're in and 
-where the error occurred. 
+The traceback debugging tool prints out the function call stack after an error 
+occurs. 
 
 The debug function tool allows you to work through the function line by line, 
-which allows you to pinpoint the specific line of code when the error occurs.
+which allows you to pinpoint the specific line of code when the error occurs. 
+Browser suspends the execution of a function wherever it is called and puts the
+function in debug mode. 
+"n" executes the current expression and moves to the next expression.
+"c" continues execution of the function and does not stop until either an error
+or the function exits.
+"Q" quits the browser.
+If you call debug on a function, you have to call undebug() to turn it off.
 
 ## Other Important Things I Learned This Week
 * A cache is a way to store objects in memory to accelerate subsequent access 
 to the same object. More here: https://github.com/lgreski/datasciencectacontent/blob/master/markdown/rprog-breakingDownMakeVector.md
+*Regular Expressions:
+  * Metacharaters:
+    * "^"" represents the start of a line.
+    * "$"" represents the end of a line.
+    * "[]" represents a character class. When "^" is used in a character class,
+    it means not.
+    * "." is used to refer to any character. You may need to preceed it with a 
+    "\" to show that you are looking for a literal period instead of the 
+    metacharacter for any character. 
+    * "|" represents "or".
+    * "( and )" group two conditions together.
+    * "?" indicates an optional expression.
+    * The "*" means anything that proceeds it will be repeated any number of 
+    times, including none. It will always look for the longest possible string 
+    that satisfies the expression. If you use "?" after the star, it will look 
+    for the shortest possible string that satisfies the expression. 
+    * The "+" means anything that proceeds it will be repeated at least one 
+    time.
+    * The "{}" are interval quantifiers that allow us to specify the minimum 
+    and maximum number of matches of an expression. Can be a range represented 
+    as m,n or an exact match m or at least represented as m,. 
+    * The "\1" and "\2" is used to repeat a previous expression that is in
+    "()".
+  * R Functions:
+    * "grep()" searches for matches of a regular expression/pattern in a 
+    charater vector and returns the indicies into a character vector.
+      * In the "stringr" library, the "str_subset()" function is basically 
+      "grep(value = TRUE". 
+    * "grep1()" searches for matches of a regular expression/pattern in a
+    character vector and returns a TRUE/FALSE vector.
+      * In the "stringr" library, "str_detect()" is essentially "grep1()".
+    * "regexpr()" and "gregexpr()" searche a chacter vector for regular 
+    expression matches and returns the indicies of the string where the match 
+    begins and the length of the match.
+      * In the "stringr" library, "str_extract()" is the same as "regexpr()".
+    * "sub()" and "gsub()" search a character vector for regular expression
+    matches and replace that match with another string.
+    * "regexec()" searches a character vector for a regular expression and 
+    returns the locations of any paranthesized sub-expressions.
+      * In the "stringr" library, "str_match" is the same as "regexec()".
