@@ -11,7 +11,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Week 1 - What I Learned 
 
-R was derived from S. R is open source, so it is free and users can add to it. R is meant to be able to be used by data analysts who are and are not familiar with programming.  
+R was derived from S. R is open source, so it is free and users can add to it. 
+R is meant to be able to be used by data analysts who are and are not familiar 
+with programming.  
 
 ## Resources to keep in mind:
 * [CRAN manuals](https://cran.r-project.org/manuals.html)
@@ -22,29 +24,58 @@ R was derived from S. R is open source, so it is free and users can add to it. R
 ## Basics
 * "<-" is the assignment operator.
 * "#" is the comment operator. 
-* The five basic classes of objects are: character, numeric, integer, complex, and logical.
-* A vector can only contain objects of the same class. A list is an exception, meaning it can contain objects of different classes.
-* Add the "L" suffix to specify that a number is an integer instead of a numeric object. 
+* The five basic classes of objects are: character, numeric, integer, complex, 
+and logical.
+* A vector can only contain objects of the same class. A list is an exception, 
+meaning it can contain objects of different classes.
+* Add the "L" suffix to specify that a number is an integer instead of a 
+numeric object. 
 * "Inf" is infinity. "NaN" is an undefined value or not a number. 
-* R objects can have attributes, such as : names/dimnames, dimensions, class, length, or other user-defined attributes. Attributes can be access using the "attributes()" function.
-* "c()" function can be used to create vectors by concatenating objects together. 
-* If you try to mix different classes of objects, coercion occurs so that every element in the vector is of the same class. You can also change the class of an object manually through explicit coercion using the "as.*" function.
-* Matrices are vactors with a dimension attribute. They are constructed column-wise, meaning numbers run down instead of sideways. 
-  + Vectors can be turned into matrices by adding a dimension attribute. Use "dim(*) <- c(#r, #c)".
-  + Matrices can also be created by column-binding or row-binding with "cbind()" and "rbind()" functions. 
-* Create a list using "list()" function. 
+* R objects can have attributes, such as : names/dimnames, dimensions, class, 
+length, or other user-defined attributes. Attributes can be access using the 
+"attributes()" function.
+* "c()" function can be used to create vectors by concatenating objects 
+together. 
+* If you try to mix different classes of objects, coercion occurs so that every
+element in the vector is of the same class. You can also change the class of an
+object manually through explicit coercion using the "as.*" function.
+* Matrices are vactors with a dimension attribute. They are constructed 
+column-wise, meaning numbers run down instead of sideways. 
+  + Vectors can be turned into matrices by adding a dimension attribute. Use 
+  "dim(*) <- c(#r, #c)".
+  + Matrices can also be created by column-binding or row-binding with 
+  "cbind()" and "rbind()" functions. 
+* Create a list using "list()" function.
+* "ls()" lists all the variables in your workspace.
+* "class()" tells you the class of the variable.
+* "dim()" tells you the number of rows/observations and columns/variables.
+* "object.size()" tells you how much space the dataset is occupying in memory.
+* "names()" creates a character vector of the column names. 
+* "head()" allows you to preview the top of the dataset.
+* "tail()" allows you to preview the end of the dataset.
+* "summary()" provides information about each variable in the dataset, 
+including how it is distributed and how much of the dataset is missing. 
 
 ## Getting into the Data
 * Use "is.na()" to test objects if they are "NA."
 * Use "is.nan()" to test objects for "NaN."
-* Data frames can store different classes of objects in each column. They have column names and row names. Often created using "read.table()" or "read.csv()". They can be created manually using "data.frame()". 
-* Calculating Memory Requirements for R Objects: (#r * #c * 8bytes/numeric)/(2^20^)/(1000) = amount of RAM required. Double it to determine how much RAM you need to read in a large dataset. 
+* Data frames can store different classes of objects in each column. They have 
+column names and row names. Often created using "read.table()" or "read.csv()".
+They can be created manually using "data.frame()". 
+* Calculating Memory Requirements for R Objects: (#r * #c * 
+8bytes/numeric)/(2^20^)/(1000) = amount of RAM required. Double it to determine
+how much RAM you need to read in a large dataset. 
 
 ### Subsetting R Objects
-* The single bracket operator always returns an object of the same class as the original. It can be used to select multiple elements of an object.
-* The double bracket operator is used to extract elements of a list or a data frame. It can only be used to extract a single element and the class of the returned object will not necessarily be a list or data frame.
-* The "$" operator is used to extract elements of a list or data frame by literal name. Its semantics are similar to that of the double bracket. 
-* Use "complete.cases(*)" to mark NA values as FALSE. Then, take a subset of the data marked TRUE.
+* The single bracket operator always returns an object of the same class as the
+original. It can be used to select multiple elements of an object.
+* The double bracket operator is used to extract elements of a list or a data 
+frame. It can only be used to extract a single element and the class of the 
+returned object will not necessarily be a list or data frame.
+* The "$" operator is used to extract elements of a list or data frame by 
+literal name. Its semantics are similar to that of the double bracket. 
+* Use "complete.cases(*)" to mark NA values as FALSE. Then, take a subset of 
+the data marked TRUE.
 
 ####Examples
 Reading in the data and showing the first 10 rows and one specific value:
@@ -106,7 +137,8 @@ Control Structures are used to control the flow of an R program.
 
 ### If - Else
 
-If-Else is used for testing of logical conditions. The else potion is optional. Structure:
+If-Else is used for testing of logical conditions. The else potion is optional.
+Structure:
 
 if(condition) {
         ## do something
@@ -340,7 +372,8 @@ mapply(rep, 1:4, 4:1)
 
 ## apply - Loop function
 
-apply is a function that operates over the margins of an array. It is used to apply a function to the rows or columns of a matrix, which is a 2D array.
+apply is a function that operates over the margins of an array. It is used to 
+apply a function to the rows or columns of a matrix, which is a 2D array.
 
 Structure:
 apply <- function (X, MARGIN, FUN, ...)
@@ -429,3 +462,82 @@ to the same object. More here: https://github.com/lgreski/datasciencectacontent/
     * "regexec()" searches a character vector for a regular expression and 
     returns the locations of any paranthesized sub-expressions.
       * In the "stringr" library, "str_match" is the same as "regexec()".
+      
+# Week 4 - What I Learned
+
+Overview of str function, simulation, and R profiling.
+
+## str()
+
+Str stands for structure, so the str() function compactly displays the internal
+structure of an R object. Its goal is to produce roughly one line of output per
+basic object. It is an alternative to summary().
+
+## Simulation
+
+R comes with a set of pseuodo-random number generators that allow you to 
+simulate from well-known probability distributions like the Normal, Poisson, 
+and binomial. For Example:
+
+* rnorm: generate random Normal variates with a given mean and standard 
+deviation.
+* dnorm: evaluate the Normal probability density (with a given mean/SD) at a 
+point or vector of points.
+* pnorm: evaluate the cummulative distribution function for a normal 
+distribution.
+* rpois: generate random Poisson veriates with a given rate. 
+
+* "d" for density.
+* "r" for random number generation.
+* "p" for cumulative distribution.
+* "q" for quantile function (inverse cumulative distribution)
+
+When simulating any random numbers it is essential to set the random number 
+seed with set.seed(). This allows for reproducibility. 
+
+The sample() function draws randomly from a specified set of scalar objects 
+allowing you to sample from arbitrary distributions of numbers.
+
+## R Profiling 
+
+The R profiling tool is used to determine exactly what part of R code is taking
+a long time to load when developing larger programs for doing big data 
+analyses.
+
+It is important to first write your code, making sure it is working properly 
+and is able to be understood, and then later optimize the code using R 
+profiling. 
+
+### system.time()
+
+The system.time() function takes an arbitrary R expression and evaluates that 
+expression and then tells you the amount of time (in seconds) it took to 
+evaluate that expression.
+
+The user time is the amount of time that is charged to the CPU for running this
+expression. The elapsed time is the amount of time that you experience. These
+are relatively close most of the time, but there are some situations where one
+will be bigger or smaller than the other.
+
+### rprof()
+
+Rprof() is used to start the profiler in R. The rprof() function keeps track of
+the function call stack at regularly sampled intervals. It prints out the 
+function call stack every 0.02 seconds.
+
+Turn on by calling Rprof() with no arguments. Turn off by calling Rprof(NULL).
+
+Do not use the system.time() function and the R profiler function together.
+
+### summaryRprof()
+
+summaryRprof() takes the output from the profiler and summarizes it in a way 
+that is readable, because the raw output from the profiler is generally not 
+very usable. Basically, it calculates how much time is spent in which function 
+by tabulating the frequency in the rprof() output with the interval 0.02. 
+
+by.total divides the time spent in each function by the total run time. by.self
+subtracts out time spent in the functions above in the call stack. by.self is
+more helpful and accurate because it tells you how much time is being spent in
+a given function, but after subtracting out all of the time spent in lower 
+level functions that it calls.
