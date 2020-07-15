@@ -1,6 +1,9 @@
-## The best function reads the outcome-of-care-measures.csv file and returns a 
-## character vector with the name of the hospital that has the best 
-## (i.e. lowest) 30-day mortality for the specified outcome in that state.
+## The best function returns the name of the hospital that has the best (i.e. 
+## lowest) 30-day mortality for the specified outcome in that given state.
+
+## If there is a tie for the best hospital for a given outcome, then the 
+## hospital names will be sorted in alphabetical order and the first hospital 
+## in that set will be chosen.
 
 best <- function(state, outcome) {
         ## Read outcome data
