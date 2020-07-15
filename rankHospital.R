@@ -6,6 +6,16 @@
 
 rankhospital <- function(state, outcome, num = "best") {
         ## Read outcome data
+        data <- read.csv("outcome-of-care-measures.csv")
+        if (tolower(outcome) == "heart attack") {
+                column <- "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack"
+        }
+        if (tolower(outcome) == "heart failure") {
+                column <- "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure"
+        }
+        if (tolower(outcome) == "pneumonia") {
+                column <- "Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia"
+        }
         ## Check that state and outcome are valid
         ## Return hospital name in that state with the given rank 
 }
