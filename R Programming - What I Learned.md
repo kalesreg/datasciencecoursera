@@ -449,7 +449,7 @@ to the same object. More here: https://github.com/lgreski/datasciencectacontent/
     * "grep()" searches for matches of a regular expression/pattern in a 
     charater vector and returns the indicies into a character vector.
       * In the "stringr" library, the "str_subset()" function is basically 
-      "grep(value = TRUE". 
+      "grep(value = TRUE"). 
     * "grep1()" searches for matches of a regular expression/pattern in a
     character vector and returns a TRUE/FALSE vector.
       * In the "stringr" library, "str_detect()" is essentially "grep1()".
