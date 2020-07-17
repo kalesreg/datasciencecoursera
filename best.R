@@ -18,31 +18,46 @@ best <- function(state, outcome) {
         } else {
                 stop("invalid outcome")
         }
+        rel_hospitals <- data.frame()
+        data_added <- FALSE
         for (i in 1:nrow(data)) {
                 state_data <- data[i, "State"]
                 outcome_data <- data[i, column]
                 if (state_data == state) {
                         if (outcome_data != "Not Available") {
-                                break
+                                hospital <- data[i, "Hospital.Name"]
+                                rel_col <- c(hospital, outcome_data)
+                                rel_hospitals <- rbind(rel_hospitals, rel_col)
+                                data_added <- TRUE
                         } else if (i != nrow(data)) {
                                 next
+                        } else if (data_added == TRUE) {
+                                break
                         } else {
                                 stop("invalid outcome")
                         }
-                        break
                 } else if (i != nrow(data)) {
                         next
+                } else if (data_added == TRUE) {
+                        break
                 } else {
                         stop("invalid state")       
                 }
         }
         ## Return hospital name in that state with lowest 30-day death rate
-        col <- c("Hospital.Name", column)
-        rel_data <- data[, col]
-        rel_hospitals <- data.frame()
-        for (i in 1:nrow(data)) {
-                
+        colnames(rel_hospitals) <- c("Hospital.Name", outcome)
+        lowest <- min(as.numeric(rel_hospitals[, outcome]))
+        low_hospitals <- vector()
+        for (i in 1:nrow(rel_hospitals)) {
+                if (as.numeric(rel_hospitals[i, outcome]) == lowest) {
+                        hospital_name <- rel_hospitals[i, "Hospital.Name"]
+                        low_hospitals <- c(low_hospitals, hospital_name)
+                }
         }
-        ##hospital_name <- data[min(data[, column], na.rm = TRUE), "Hospital.Name"]
-        ##print(hospital_name)
+        if (length(low_hospitals) == 1) {
+                print(low_hospitals)
+        } else {
+                sort_hospitals <- sort(low_hospitals)
+                print(sort_hospitals[1])
+        }
 }
