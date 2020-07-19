@@ -7,27 +7,81 @@
 rankall <- function(outcome, num = "best") {
         ## Read outcome data
         data <- read.csv("outcome-of-care-measures.csv")
+        ## Check that state and outcome are valid
         if (tolower(outcome) == "heart attack") {
                 column <- "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack"
-        }
-        if (tolower(outcome) == "heart failure") {
+        } else if (tolower(outcome) == "heart failure") {
                 column <- "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure"
-        }
-        if (tolower(outcome) == "pneumonia") {
+        } else if (tolower(outcome) == "pneumonia") {
                 column <- "Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia"
+        } else {
+                stop("invalid outcome")
         }
-        ## Check that state and outcome are valid
+        rel_data <- data.frame()
+        data_added <- FALSE
+        for (i in 1:nrow(data)) {
+                state_data <- data[i, "State"]
+                outcome_data <- data[i, column]
+                if (outcome_data != "Not Available") {
+                        hospital <- data[i, "Hospital.Name"]
+                        rel_col <- c(hospital, state_data, outcome_data)
+                        rel_data <- rbind(rel_data, rel_col)
+                        data_added <- TRUE
+                } else if (i != nrow(data)) {
+                        next
+                } else if (data_added == TRUE) {
+                        break
+                } else {
+                        no_data <- c("NA", state_data, 1)
+                        rel_data <- rbind(rel_data, no_data)
+                }
+        }
         ## For each state, find the hospital of the given rank
+        colnames(rel_data) <- c("Hospital", "State", outcome)
+        ranked <- rel_data[order(rel_data[, "State"],
+                                 as.numeric(rel_data[, outcome]), 
+                                 rel_data[, "Hospital"]), ]
+        rel_col <- c("Hospital", "State")
+        ranks <- data.frame()
+        state <- ranked[1, "State"]
+        cur_state <- data.frame()
+        ranking <- function(num) {
+                if (num == "best" || num == 1) {
+                        rel_row <- cur_state[1, rel_col]
+                        ranks <<- rbind(ranks, rel_row)
+                } else if (num == "worst") {
+                        rel_row <- cur_state[nrow(cur_state), rel_col]
+                        ranks <<- rbind(ranks, rel_row)
+                } else if (num > nrow(cur_state)) {
+                        rel_row <- c("NA", state)
+                        ranks <<- rbind(ranks, rel_row)
+                        colnames(ranks) <<- rel_col
+                } else {
+                        rel_row <- cur_state[num, rel_col]
+                        ranks <<- rbind(ranks, rel_row)
+                }
+        }
+        for (i in 1:nrow(ranked)) {
+                if (i != nrow(ranked) && ranked[i, "State"] == state) {
+                        rel_state <- ranked[i, rel_col]
+                        cur_state <- rbind(cur_state, rel_state)
+                } else if (i != nrow(ranked) && ranked[i, "State"] != state) {
+                        ranking(num)
+                        cur_state <- data.frame()
+                        state <- ranked[i, "State"]
+                        rel_state <- ranked[i, rel_col]
+                        cur_state <- rbind(cur_state, rel_state)
+                } else if (i == nrow(ranked) && ranked[i, "State"] == state) {
+                        rel_state <- ranked[i, rel_col]
+                        cur_state <- rbind(cur_state, rel_state)
+                        ranking(num)
+                } else {
+                        cur_state <- data.frame()
+                        rel_state <- ranked[i, rel_col]
+                        cur_state <- rbind(cur_state, rel_state)
+                        ranking(num)
+                }
+        }
         ## Return a data frame with the hospital names and the state name
+        return(ranks)
 }
-
-## Note: The function should return a value for every state (some may be NA). 
-## The first column in the data frame is named hospital, which contains the 
-## hospital name, and the second column is named state, which contains the 
-## 2-character abbreviation for the state name. Hospitals that do not have data 
-## on a particular outcome should be excluded from the set of hospitals when 
-## deciding the rankings.
-
-## NOTE: For the purpose of this part of the assignment (and for efficiency), 
-## your function should NOT call the rankhospital function from the previous 
-## section.
