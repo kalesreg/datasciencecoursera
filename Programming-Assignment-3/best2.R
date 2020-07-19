@@ -1,10 +1,11 @@
-## The rankhospital function returns the rank of the hospital for a given state 
-## based on the rate of the given outcome.
+## The best function returns the name of the hospital that has the best (i.e. 
+## lowest) 30-day mortality for the specified outcome in that given state.
 
-## If multiple hospitals have the same 30-day mortality rate for a given cause
-## of death, then the ranking will be alphabetical by hospital name. 
+## If there is a tie for the best hospital for a given outcome, then the 
+## hospital names will be sorted in alphabetical order and the first hospital 
+## in that set will be chosen.
 
-rankospital <- function(state, outcome, num = "best") {
+best2 <- function(state, outcome) {
         ## Read outcome data
         data <- read.csv("outcome-of-care-measures.csv", 
                          na.strings = 'Not Available', 
@@ -30,17 +31,11 @@ rankospital <- function(state, outcome, num = "best") {
                         stop("invalid state")       
                 }
         }
-        ## Return hospital name in that state with the given rank
-        ordered <- data[order(data[, "State"], data[, column], data[, "Hospital.Name"]), ]
+        ## Return hospital name in that state with lowest 30-day death rate
+        ordered <- data[order(data[, column], data[, "Hospital.Name"]), ]
         by_state <- split(ordered, ordered[, "State"])
         given_state <- by_state[[state]]
         hospital_names <- given_state$Hospital.Name
-        if (num == "best") {
-                rank <- hospital_names[1]
-        } else if (num == "worst") {
-                rank <- hospital_names[length(hospital_names)]
-        } else {
-                rank <- hospital_names[num]
-        }
-        print(rank)
+        best <- hospital_names[1]
+        print(best)
 }

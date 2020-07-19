@@ -6,82 +6,40 @@
 
 rankall <- function(outcome, num = "best") {
         ## Read outcome data
-        data <- read.csv("outcome-of-care-measures.csv")
+        data <- read.csv("outcome-of-care-measures.csv", 
+                         na.strings = 'Not Available', 
+                         stringsAsFactors = FALSE)
         ## Check that state and outcome are valid
+        outcomes <- c('heart attack' = 11, 'heart failure' = 17, 'pneumonia' = 23) 
         if (tolower(outcome) == "heart attack") {
-                column <- "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack"
+                column <- outcomes['heart attack']
         } else if (tolower(outcome) == "heart failure") {
-                column <- "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure"
+                column <- outcomes['heart failure']
         } else if (tolower(outcome) == "pneumonia") {
-                column <- "Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia"
+                column <- outcomes['pneumonia']
         } else {
                 stop("invalid outcome")
         }
-        rel_data <- data.frame()
-        data_added <- FALSE
-        for (i in 1:nrow(data)) {
-                state_data <- data[i, "State"]
-                outcome_data <- data[i, column]
-                if (outcome_data != "Not Available") {
-                        hospital <- data[i, "Hospital.Name"]
-                        rel_col <- c(hospital, state_data, outcome_data)
-                        rel_data <- rbind(rel_data, rel_col)
-                        data_added <- TRUE
-                } else if (i != nrow(data)) {
-                        next
-                } else if (data_added == TRUE) {
-                        break
-                } else {
-                        no_data <- c("NA", state_data, 1)
-                        rel_data <- rbind(rel_data, no_data)
-                }
-        }
-        ## For each state, find the hospital of the given rank
-        colnames(rel_data) <- c("hospital", "state", outcome)
-        ranked <- rel_data[order(rel_data[, "state"],
-                                 as.numeric(rel_data[, outcome]), 
-                                 rel_data[, "hospital"]), ]
-        rel_col <- c("hospital", "state")
-        ranks <- data.frame()
-        state <- ranked[1, "state"]
-        cur_state <- data.frame()
-        ranking <- function(num) {
-                if (num == "best" || num == 1) {
-                        rel_row <- cur_state[1, rel_col]
-                        ranks <<- rbind(ranks, rel_row)
+        ## Return hospital name in that state with the given rank
+        ordered <- data[order(data[, "State"], data[, column], data[, "Hospital.Name"]), ]
+        by_state <- split(ordered, ordered[, "State"])
+        
+        states <- unique(ordered$State)
+        num_states <- c(1:length(states))
+        hospital_data <- sapply(num_states, function(x) by_state[[x]]["Hospital.Name"])
+        ranking <- function(x, num) {
+                if (num == "best") {
+                        hospital_name <- hospital_data[[x]][1]
                 } else if (num == "worst") {
-                        rel_row <- cur_state[nrow(cur_state), rel_col]
-                        ranks <<- rbind(ranks, rel_row)
-                } else if (num > nrow(cur_state)) {
-                        rel_row <- c("NA", state)
-                        ranks <<- rbind(ranks, rel_row)
-                        colnames(ranks) <<- rel_col
+                        num_hosp <- length(hospital_data[[x]])
+                        hospital_name <- hospital_data[[x]][num_hosp]
                 } else {
-                        rel_row <- cur_state[num, rel_col]
-                        ranks <<- rbind(ranks, rel_row)
+                        hospital_name <- hospital_data[[x]][num]
                 }
+                return(hospital_name)
         }
-        for (i in 1:nrow(ranked)) {
-                if (i != nrow(ranked) && ranked[i, "state"] == state) {
-                        rel_state <- ranked[i, rel_col]
-                        cur_state <- rbind(cur_state, rel_state)
-                } else if (i != nrow(ranked) && ranked[i, "state"] != state) {
-                        ranking(num)
-                        cur_state <- data.frame()
-                        state <- ranked[i, "state"]
-                        rel_state <- ranked[i, rel_col]
-                        cur_state <- rbind(cur_state, rel_state)
-                } else if (i == nrow(ranked) && ranked[i, "state"] == state) {
-                        rel_state <- ranked[i, rel_col]
-                        cur_state <- rbind(cur_state, rel_state)
-                        ranking(num)
-                } else {
-                        cur_state <- data.frame()
-                        rel_state <- ranked[i, rel_col]
-                        cur_state <- rbind(cur_state, rel_state)
-                        ranking(num)
-                }
-        }
-        ## Return a data frame with the hospital names and the state name
+        hospital_names <- sapply(num_states, function(x) ranking(x, num))
+        ranks <- data.frame(hospital_names, states)
+        colnames(ranks) <- c("hospital", "state")
         return(ranks)
 }
