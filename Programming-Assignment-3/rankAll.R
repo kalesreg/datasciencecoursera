@@ -37,13 +37,13 @@ rankall <- function(outcome, num = "best") {
                 }
         }
         ## For each state, find the hospital of the given rank
-        colnames(rel_data) <- c("Hospital", "State", outcome)
-        ranked <- rel_data[order(rel_data[, "State"],
+        colnames(rel_data) <- c("hospital", "state", outcome)
+        ranked <- rel_data[order(rel_data[, "state"],
                                  as.numeric(rel_data[, outcome]), 
-                                 rel_data[, "Hospital"]), ]
-        rel_col <- c("Hospital", "State")
+                                 rel_data[, "hospital"]), ]
+        rel_col <- c("hospital", "state")
         ranks <- data.frame()
-        state <- ranked[1, "State"]
+        state <- ranked[1, "state"]
         cur_state <- data.frame()
         ranking <- function(num) {
                 if (num == "best" || num == 1) {
@@ -62,16 +62,16 @@ rankall <- function(outcome, num = "best") {
                 }
         }
         for (i in 1:nrow(ranked)) {
-                if (i != nrow(ranked) && ranked[i, "State"] == state) {
+                if (i != nrow(ranked) && ranked[i, "state"] == state) {
                         rel_state <- ranked[i, rel_col]
                         cur_state <- rbind(cur_state, rel_state)
-                } else if (i != nrow(ranked) && ranked[i, "State"] != state) {
+                } else if (i != nrow(ranked) && ranked[i, "state"] != state) {
                         ranking(num)
                         cur_state <- data.frame()
-                        state <- ranked[i, "State"]
+                        state <- ranked[i, "state"]
                         rel_state <- ranked[i, rel_col]
                         cur_state <- rbind(cur_state, rel_state)
-                } else if (i == nrow(ranked) && ranked[i, "State"] == state) {
+                } else if (i == nrow(ranked) && ranked[i, "state"] == state) {
                         rel_state <- ranked[i, rel_col]
                         cur_state <- rbind(cur_state, rel_state)
                         ranking(num)
