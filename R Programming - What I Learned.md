@@ -77,7 +77,7 @@ literal name. Its semantics are similar to that of the double bracket.
 * Use "complete.cases(*)" to mark NA values as FALSE. Then, take a subset of 
 the data marked TRUE.
 
-####Examples
+#### Examples
 Reading in the data and showing the first 10 rows and one specific value:
 ```{r}
 data <- read.csv("hw1_data.csv")
