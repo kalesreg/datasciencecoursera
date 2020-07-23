@@ -42,25 +42,51 @@ data could change over time.
 
 ## Reading Different File Types Into R
 
-The read.table() function is the most common function used to read files into R
-because it is the most robust. However, it requires you to input more parameters
-and can be a bit slow. read.csv, read.csv2, read.xlsx, and read.xlsx2 are all 
-good alternatives.
+The "read.table()"" function is the most common function used to read files into
+R because it is the most robust. However, it requires you to input more 
+parameters and can be a bit slow. read.csv, read.csv2, read.xlsx, and read.xlsx2
+are all good alternatives.
 
 XML is widely used in internet applications, so it will be seen when using 
 things like web scraping and internet APIs. It uses tags, elements, and 
 attributes. You can read XML into R using the XML library, then pass it to 
-xmlTreeParse(). You can find more XPath info [here](http://www.stat.berkeley.edu/~statcur/Workshop2/Presentations/XML.pdf).
+"xmlTreeParse()". You can find more info [here](http://www.stat.berkeley.edu/~statcur/Workshop2/Presentations/XML.pdf).
+* "xmlTreeParse()" returns the xml for a given URL.
+* "xmlRoot()" returns the internal structure of an XML file.
+* "xmlName()" gives the element name for a given node.
+* "xmlAttrs()" gives all the attributes/child nodes for a given node. Use 
+"xmlGetAttr()" get a particular value.
+* "xmlValue()" to get the text content for a given node.
+* "xmlChildren()", "node[[i]]", or "node[["el-name"]]" to select a node.
+* "xmlSApply()" to loop over the nodes and get the content as a string.
+* XPath is a language for node subsetting by name, with specific attributes 
+present, with attributes with particular values, and with parents, ancestors,
+children.
+        * /node - top-level node
+        * //node - node at any level
+        * node[@attr-name] - node that has an attribute named "attr-name"
+        * node[@attr-name='bob'] - node that has attribute named attr-name with
+        value 'bob
+        * node/@x - value of attribute x in node with such attr. 
 
 JSON is a lightweight data storage format for data from APIs. Similar to XML,
 but different syntx/format. You can read JSON into R using the jsonlite library,
-then pass it to fronJSON(). You can find more infor on JSON files [here](http:// www.json.org/). 
+then pass it to "fronJSON()". You can find more infor on JSON files [here](http:// www.json.org/). 
 A good tutorial on jsonlite can be found [here](http://www.r-bloggers.com/new-package-jsonlite-a-smarter-json-encoderdecoder/).
 
 ## data.table
 
-data.table is basically a faster version of data.frame. However, data.table
-does function slightly differently. 
+"data.table()" is basically a faster version of "data.frame()". However,
+"data.table()"does function slightly differently. 
+
+data.tables don't automatically copy like data.frames do, so you have to
+explicitly copy a data.table with "copy()".
+
+Use "tables()"" to see all the data tables in memory.
+
+"fread()" is much faster than "read.table()". 
+
+A list of differences between data.table and data.frame can be found [here](http://stackoverflow.com/questions/13618488/what-you-can-do-with-data-frame-that-you-cant-in-data-table).
 
 ### Single Element Subsetting
 
@@ -68,26 +94,75 @@ Single-element subsetting in data.table refers to row, rather than columns.
 
 ### Row Subsetting
 
-Row subsetting in data.table is the same as data.frame, so it looks like:
-DT[x, ]. However, unlike data.frame, you can use single
-element subsetting with data.table to get one row: DT[x].
+Row subsetting in "data.table()" is the same as "data.frame()", so it looks
+like: DT[x, ]. However, unlike "data.frame()", you can use single element
+subsetting with "data.table()" to get one row: DT[x].
 
 ### Column Subsetting
 
-You can get a column from data.table as a vector by DT[[x]]. If x is a number, 
-you can get a column from data.table as a table by DT[, x]. If x is a column
-name, you can get a column from data.table as a table by DT[, list(x)]. When 
-using a column name in data.table, you don't have to surround it in quotation 
-marks. 
+You can get a column from "data.table()" as a vector by DT[[x]]. If x is a
+number, you can get a column from "data.table()" as a table by DT[, x]. If x is 
+a column name, you can get a column from "data.table()" as a table by 
+DT[, list(x)]. When using a column name in "data.table()", you don't have to 
+surround it in quotation marks. 
 
-Expressions
+### Expressions
 
-Key. Join using keys. 
+In R, an expression is a collection of statements enclosed in curley brackets.
+Expressions can be used to do multiple operations.
 
-.N is an integer, length 1. 
+If you provide a list to the j expression, you generate a new data.table as an 
+output with the operations in the list call. Example:
+```{r}
+library(data.table)
+DT <- data.table(x=1:5, y=1:5)
+DT[, list(mean_x = mean(x), sum_y = sum(y), sumsq=sum(x^2+y^2))]
+```
 
-Use tables() to see all the data tables in memory.
+Using the ":=" operator tells you to assign columns by reference into the 
+data.table. Example:
+```{r}
+library(data.table)
+DT <- data.table(x=1:5)
+DT[, y := x^2]
+```
 
-fread() is much faster than read.table. 
+The left side of the ":=" call can also be a character vector of names for 
+which the corresponding final statement in the j expression is a list of the 
+same length. Example:
+```{r}
+library(data.table)
+DT <- data.table(x=1:5, y=6:10, z=11:15)
+DT[, c('m', 'n') := { tmp <- (x + 1) / (y + 1); list( log2(tmp), log10(tmp) ) }]
+DT[, `:=`(a=x^2, b=y^2)]
+DT[, c("c","d"):=list(x^2, y^2)]
+```
 
-A list of differences between data.table and data.frame can be found [here](http://stackoverflow.com/questions/13618488/what-you-can-do-with-data-frame-that-you-cant-in-data-table).
+### Keys
+
+Keys allow for faster indexing and subsetting. Using keys does a "binary search"
+rather than a "vector scan", which is much faster.
+
+Set the key using "setkey(DT, key)".
+
+### Joins
+
+Data.tables can be put together in multiple ways.
+* Left join - keeps all the values present in the first DT. 
+merge(DT1, DT2, all.x=TRUE)
+* Right join - keeps all the values present in the second DT. 
+merge(DT1, DT2, all.y=TRUE)
+* Outer join - keeps all the values.
+merge(DT1, DT2, all=TRUE)
+* Inner join - keeps only the values that appear in both DTs.
+merge(DT1, DT2, all=FALSE)
+
+### Special Variables
+
+* ".SD" is a data.table containing the subset of data for each group, excluding
+columns used in "by".
+* ".BY" is a list containing a length 1 vector for each item in "by".
+* ".N" is an integer, length 1, containing the number of rows in ".SD".
+* ".I" is a vector of indices, holding the row locations from which ".SD" was
+pulled from the parent "DT".
+* ".GRP" is a counter telling you which group you're working with.
