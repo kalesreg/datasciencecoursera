@@ -166,3 +166,50 @@ columns used in "by".
 * ".I" is a vector of indices, holding the row locations from which ".SD" was
 pulled from the parent "DT".
 * ".GRP" is a counter telling you which group you're working with.
+
+# Week 2 - What I Learned
+
+Reading in data from multiple different sources.
+
+## Reading MySQL
+
+mySQL is a free and widely used open source database software. Data are 
+structured in databases, tables within databases, and fields within tables.
+
+Open a connection to SQL with "dbConnect()". If you know that all the results 
+will fit in memory, you can use "dbGetQuery()" to send, fetch, and clear the 
+query. If you are not sure that the results will fit in memory, you can use 
+"dbSendQuery()", "deFetch()", and "dbClearResult()" to query specific data from 
+a particular database and table. Make sure to use "dbClearResult()" and 
+"dbDisconnect()" after you are done to close the connection. 
+
+"dbListTables()" lists all the tables in a particular database. 
+"dbListFields()" gets the dimensions for a specific table.
+
+## Reading HDF5
+
+HDF5 is used for storing large data sets. 
+* "h5createGroup()" creates a group in a hdf5 document.
+* "h5write()" writes data into a file group. 
+* "h5read()" reads data from a specified file group. 
+* "h5ls()" lists the file contents. 
+
+## Reading from the Web
+
+Webscraping programatically extracts data from the HTML code of websites. Open
+a connection to a website using "url()". Get the html code using "readLines()". 
+Then, close the connection using "close()". Could also use "htmlTreeParse()" 
+from the XML library. Could also use "GET()", "content()", and "htmlParse()" 
+from the httr library. 
+
+To access websites with passwords, use "GET(url, authenticate("user", 
+"passwd"))". You can save handles with "handle("URL")"
+
+## Reading from APIs
+
+Use the httr library for APIs. Specific information required for each sites API.
+
+## Reading from Other Sources
+
+There is usually is already a R package available for most sources. Just google
+it. 
