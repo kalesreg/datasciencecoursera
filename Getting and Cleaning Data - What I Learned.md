@@ -213,3 +213,54 @@ Use the httr library for APIs. Specific information required for each sites API.
 
 There is usually is already a R package available for most sources. Just google
 it. 
+
+# Week 3 - What I Learned
+
+## Summarizing Data
+
+"summary()" gives a quick overview of the data. It provides the column names 
+and, depending on the type of data, some sort of summary info. This could be a
+count, quantiles, or something else. 
+
+"str()" also gives an overview but it is a bit more in depth. It tells you what
+type of data the object is, number of observations and variables, and the column
+name and that columns data type, levels, and the first few values.
+
+"quantile()" gives the quantiles for quantitative variables. You can specify 
+the values for which probabilities you want. 
+
+You can make a table with specified info using "table()". For example:
+```{r}
+## gives a count of NA values in the zipcode column
+table(restData$zipCode, useNA = "ifany")
+
+## results in a table of cross-sections of council districts and zipcodes
+table(restData$councilDistrict, restData$zipCode)
+```
+
+You can use "sum(is.na(data))" (count), "any(is.na(data))" (logical), and 
+"all(data > 0)" (logical) to check for missing values.
+
+"colSums()" gives the sum for given data.
+
+You can search data for particular values with specific characteristics. This
+can be done using "table(data %in% c("characteristic"))" or you can subset the
+data by using "data[data %in% c("characteristic"), ]".
+
+Use "xtabs()" to get cross tabs. For example,
+```{r}
+data(UCBAdmissions)
+DF = as.data.frame(UCBAdmissions)
+xt = xtabs(Freq ~ Gender + Admit, data=DF)
+xt
+```
+You can make flat tables from cross tabs using "ftable()".
+
+Use "object.size()" and "print(object.size(), units="Mb")" to get the size of a
+dataset. 
+
+## Creating New Variables
+
+## Reshaping Data
+
+## Merging Data
